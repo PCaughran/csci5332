@@ -32,12 +32,24 @@ public class Client {
 			this.bw.flush();
 			
 			Scanner scan = new Scanner(System.in);
+
+			
+			
+				while(socket.isConnected()) {
+					
+					String message = scan.nextLine();
+					this.bw.write(this.username+": "+message);
+					this.bw.newLine();
+					this.bw.flush();
+					
+
 			while(socket.isConnected()) {
 				String message = scan.nextLine();
 				this.bw.write(this.username+": "+message);
 				this.bw.newLine();
 				this.bw.flush();
 				
+
 			}
 			
 		}catch(Exception ex) {
@@ -50,14 +62,29 @@ public class Client {
 			@Override
 			public void run() {
 				String message;
+
+				if(br!=null) {
 				while(socket.isConnected()) {
 					try {
 						message = br.readLine();
+						if (message.equals("PASSWORD AUTHENTICATION FAILED")){
+							System.out.print("Exiting program due to failure to provide correct password");
+							System.exit(1);
+						}
+
+				while(socket.isConnected()) {
+					try {
+						message = br.readLine();
+
 						System.out.println(message);
 					}catch(Exception ex) {
 						closeEverything(socket, br, bw);
 					}
 				}
+
+				}
+
+
 			}
 		}.start();
 	}
@@ -76,7 +103,10 @@ public class Client {
 		}catch(Exception ex) {ex.printStackTrace();}
 	}
 	
-	public static void main(String[] args) {
+	public static void main(String[] args) { 
+
+	
+
 		Scanner scan = new Scanner(System.in);
 		System.out.print("Thank you for joining the SecureChat Server. What is the IP of the server you want to join? " );
 		String ip = scan.nextLine();
@@ -91,6 +121,7 @@ public class Client {
 		}
 		
 		Client client = new Client(socket, username );
+
 		client.listenForMessage();
 		client.sendMessage();
 	}
