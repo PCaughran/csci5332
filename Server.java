@@ -13,11 +13,6 @@ public class Server {
 		this.admin = new Admin(this.password);
 
 	
-	public Server(ServerSocket serverSocket) {
-		this.serverSocket = serverSocket;
-		this.password = establishPassword();
-
-		
 	}
 	
 	public void startServer() {
@@ -30,9 +25,6 @@ public class Server {
 
 				System.out.println("A new client has accessed the server.");
 				ClientHandler clientHandle = new ClientHandler(socket, admin);
-
-				System.out.println("A new client has joined the chat");
-				ClientHandler clientHandle = new ClientHandler(socket);
 
 				
 				Thread thread = new Thread(clientHandle);

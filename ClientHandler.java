@@ -18,10 +18,6 @@ public class ClientHandler implements Runnable {
 	
 	public ClientHandler(Socket socket, Admin admin) {
 
-
-	
-	public ClientHandler(Socket socket) {
-
 		try{
 			this.socket = socket;
 			this.bw = new BufferedWriter(new OutputStreamWriter(this.socket.getOutputStream()));
@@ -107,7 +103,7 @@ public class ClientHandler implements Runnable {
 
 				if (!c.username.equals(this.username)&& c.isAuthenticated) {
 
-				if (!c.username.equals(this.username)) {
+				
 
 					c.bw.write(message);
 					c.bw.newLine();

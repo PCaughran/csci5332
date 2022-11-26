@@ -2,6 +2,7 @@ import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
+import java.net.InetAddress;
 import java.net.Socket;
 import java.util.Scanner;
 
@@ -32,17 +33,6 @@ public class Client {
 			this.bw.flush();
 			
 			Scanner scan = new Scanner(System.in);
-
-			
-			
-				while(socket.isConnected()) {
-					
-					String message = scan.nextLine();
-					this.bw.write(this.username+": "+message);
-					this.bw.newLine();
-					this.bw.flush();
-					
-
 			while(socket.isConnected()) {
 				String message = scan.nextLine();
 				this.bw.write(this.username+": "+message);
@@ -63,15 +53,6 @@ public class Client {
 			public void run() {
 				String message;
 
-				if(br!=null) {
-				while(socket.isConnected()) {
-					try {
-						message = br.readLine();
-						if (message.equals("PASSWORD AUTHENTICATION FAILED")){
-							System.out.print("Exiting program due to failure to provide correct password");
-							System.exit(1);
-						}
-
 				while(socket.isConnected()) {
 					try {
 						message = br.readLine();
@@ -85,7 +66,7 @@ public class Client {
 				}
 
 
-			}
+			
 		}.start();
 	}
 	
@@ -115,6 +96,7 @@ public class Client {
 		Socket socket= null;
 		String username = scan.nextLine();
 		try{
+			InetAddress IPv4 = InetAddress.getByName(ip);
 			socket = new Socket(ip, 5332);
 		}catch(Exception ex) {
 			ex.printStackTrace();
