@@ -13,14 +13,21 @@ public class ClientHandler implements Runnable {
 	private BufferedWriter bw;
 	private String username;
 	private boolean isAuthenticated;
+
 	private Admin admin;
 	
 	public ClientHandler(Socket socket, Admin admin) {
+
+
+	
+	public ClientHandler(Socket socket) {
+
 		try{
 			this.socket = socket;
 			this.bw = new BufferedWriter(new OutputStreamWriter(this.socket.getOutputStream()));
 			this.br = new BufferedReader(new InputStreamReader(this.socket.getInputStream()));
 			this.username = br.readLine();
+
 			this.admin = admin;
 			this.isAuthenticated = false;
 			clientHandlers.add(this);
@@ -37,10 +44,17 @@ public class ClientHandler implements Runnable {
 				this.bw.flush();
 				
 			}
+
+			
+			
+			clientHandlers.add(this);
+			broadcastMessage("SERVER: "+this.username+" has entered the chat");
+
 		}catch(Exception ex) {
 			closeEverything(this.socket, this.br, this.bw);
 		}
 	}
+
 	public boolean authenticate() {
 		
 		for(ClientHandler c : clientHandlers) {
@@ -70,6 +84,7 @@ public class ClientHandler implements Runnable {
 		return this.isAuthenticated;
 	}
 	
+
 	@Override
 	public void run(){
 		String message;
@@ -89,7 +104,11 @@ public class ClientHandler implements Runnable {
 		
 		for(ClientHandler c: clientHandlers) {
 			try {
+
 				if (!c.username.equals(this.username)&& c.isAuthenticated) {
+
+				if (!c.username.equals(this.username)) {
+
 					c.bw.write(message);
 					c.bw.newLine();
 					c.bw.flush();

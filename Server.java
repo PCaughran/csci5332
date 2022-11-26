@@ -5,23 +5,35 @@ import java.util.Scanner;
 public class Server {
 	private ServerSocket serverSocket;
 	private String password;
+
 	private Admin admin;
 	public Server(ServerSocket serverSocket) {
 		this.serverSocket = serverSocket;
 		this.password = establishPassword();
 		this.admin = new Admin(this.password);
+
+	
+	public Server(ServerSocket serverSocket) {
+		this.serverSocket = serverSocket;
+		this.password = establishPassword();
+
 		
 	}
 	
 	public void startServer() {
 		System.out.println("Secure Server Started");
-	
+
 		try {
 			while(!serverSocket.isClosed()) {
 				Socket socket = serverSocket.accept();
 				
+
 				System.out.println("A new client has accessed the server.");
 				ClientHandler clientHandle = new ClientHandler(socket, admin);
+
+				System.out.println("A new client has joined the chat");
+				ClientHandler clientHandle = new ClientHandler(socket);
+
 				
 				Thread thread = new Thread(clientHandle);
 				thread.start();
@@ -40,7 +52,9 @@ public class Server {
 		char answer = scan.nextLine().charAt(0);
 		if(answer == 'y') {
 			
+
 		return password;
+
 		}
 		}
 	}
