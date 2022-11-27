@@ -12,7 +12,7 @@ To start a server on your machine:
 To start a Client session on your machine:
 1. Compile Client.java as you would any other java program. I use the command 'javac Client.java'
 2. Run as Client.java as you would any other java program. See the above section for more details
-3. The program will ask you to provide the IP Address/Port number of the server, respond in the form XXX.XXX.XXX.XXX./XXXX, any other form will cause the program to crash.
+3. The program will ask you to provide the IP Address/Port number of the server, respond in the form XXX.XXX.XXX.XXX/XXXX, any other form will cause the program to crash.
 4. The program will ask you to provide a username, this cannot be changed and is visible to everyone in the server 
 5. The program will then verify the password for the server. it is case sensitive.
 6. If the password cannot be verified, your session will be terminated
