@@ -6,7 +6,7 @@ import java.net.InetAddress;
 public class Server {
 	private ServerSocket serverSocket;
 	private String password;
-	private int portNumber=3050;
+	static int portNumber=3050;
 	private Admin admin;
 	//default constructor, will use default number of attempts provided
 		public Server(ServerSocket serverSocket) {
