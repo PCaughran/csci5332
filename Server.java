@@ -5,14 +5,18 @@ import java.util.Scanner;
 public class Server {
 	private ServerSocket serverSocket;
 	private String password;
-
 	private Admin admin;
+	
+	//default constructor, will use default number of attempts provided
 	public Server(ServerSocket serverSocket) {
+		this(serverSocket, 3);
+	}
+	
+	//constructor where you can choose the number of attempts
+	public Server(ServerSocket serverSocket, int attempts) {
 		this.serverSocket = serverSocket;
 		this.password = establishPassword();
-		this.admin = new Admin(this.password);
-
-	
+		this.admin = new Admin(this.password, attempts);
 	}
 	
 	public void startServer() {

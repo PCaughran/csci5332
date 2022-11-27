@@ -43,7 +43,7 @@ public class ClientHandler implements Runnable {
 
 			
 			
-			clientHandlers.add(this);
+			
 			broadcastMessage("SERVER: "+this.username+" has entered the chat");
 
 		}catch(Exception ex) {
@@ -57,7 +57,7 @@ public class ClientHandler implements Runnable {
 			try{
 				String guess = "";
 				if(!c.isAuthenticated) {
-				int attempts = 3;
+				int attempts = this.admin.getAttemptsAllowed();
 					while(attempts > 0 && !c.isAuthenticated) {
 						c.bw.write(String.format("Attempts Remaining: %d| Enter the password for the server. ->",attempts));
 						c.bw.newLine();
