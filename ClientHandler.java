@@ -13,7 +13,7 @@ public class ClientHandler implements Runnable {
 	private BufferedWriter bw;
 	private String username;
 	private boolean isAuthenticated;
-
+	private String curErrorMessage;
 	private Admin admin;
 	
 	public ClientHandler(Socket socket, Admin admin) {
@@ -34,7 +34,7 @@ public class ClientHandler implements Runnable {
 			}
 			else {
 				this.admin.banIPAddress(socket.getInetAddress());
-				this.bw.write("PASSWORD AUTHENTICATION FAILED, you have been banned from the server.");
+				this.bw.write(curErrorMessage);
 				this.bw.newLine();
 				this.bw.flush();
 				
@@ -43,7 +43,7 @@ public class ClientHandler implements Runnable {
 			
 			
 			
-			broadcastMessage("SERVER: "+this.username+" has entered the chat");
+		
 
 		}catch(Exception ex) {
 			closeEverything(this.socket, this.br, this.bw);
@@ -52,6 +52,7 @@ public class ClientHandler implements Runnable {
 
 	public boolean authenticate() {
 		if (this.admin.isIPbanned(this.socket.getInetAddress())){ 
+			this.curErrorMessage = "BANNED";
 			this.isAuthenticated = false;
 			return this.isAuthenticated;
 		}
@@ -80,6 +81,7 @@ public class ClientHandler implements Runnable {
 			}
 		
 		}
+		if (!this.isAuthenticated) this.curErrorMessage = "PASSWORD AUTHENTICATION FAILED";
 		return this.isAuthenticated;
 	}
 	
