@@ -2,11 +2,12 @@ import java.net.ServerSocket;
 import java.net.Socket;
 import java.util.InputMismatchException;
 import java.util.Scanner;
+import java.net.BindException;
 import java.net.InetAddress;
 public class Server {
 	private ServerSocket serverSocket;
 	private String password;
-	static int portNumber=3050;
+	static int portNumber=5332;
 	private Admin admin;
 	//default constructor, will use default number of attempts provided
 		public Server(ServerSocket serverSocket) {
@@ -23,17 +24,11 @@ public class Server {
 	public void startServer() {
 	
 		InetAddress SERVER_IP = null;
-		while(true)
+		
 			try(Scanner scan = new Scanner(System.in)){
-			//TODO ASK FOR PORT NUMBER AT SPOME POINT
-			portNumber = 3050;
-			SERVER_IP=InetAddress.getLocalHost(); 
-			if(SERVER_IP != null) break;
-			}catch(InputMismatchException ime) {
-				System.out.print("\nInput not of desired type, try again.");
-				continue;
+				SERVER_IP=InetAddress.getLocalHost(); 
 			}catch(Exception ex) {
-			ex.printStackTrace();
+				ex.printStackTrace();
 			}
 		
 		System.out.printf("Secure Server Started on %s port# %d\n", SERVER_IP, portNumber);
@@ -41,12 +36,9 @@ public class Server {
 		try {
 			while(!serverSocket.isClosed()) {
 				Socket socket = serverSocket.accept();
-				
-
+				System.out.println(socket.getInetAddress().getHostAddress().toString());
 				System.out.println("A new client has accessed the server.");
 				ClientHandler clientHandle = new ClientHandler(socket, admin);
-
-				
 				Thread thread = new Thread(clientHandle);
 				thread.start();
 			}
@@ -56,18 +48,15 @@ public class Server {
 	}
 	
 	public String establishPassword() {
-		Scanner scan = new Scanner(System.in);
+		Scanner passwordScanner = new Scanner(System.in);
 		while(true) {
-		System.out.print("What is the password for this server? ->");
-		String password = scan.nextLine();
-		System.out.print("Password is "+password+". (y/n)->");
-		char answer = scan.nextLine().charAt(0);
-		if(answer == 'y') {
-			
-
-		return password;
-
-		}
+			System.out.print("What is the password for this server? ->");
+			String password = passwordScanner.nextLine();
+			System.out.print("Password is "+password+". (y/n)->");
+			char answer = passwordScanner.nextLine().charAt(0);
+			if(answer == 'y') {
+				return password;
+			}else continue;
 		}
 	}
 	
@@ -84,8 +73,25 @@ public class Server {
 
 	
 	public static void main(String[] args) throws Exception {
-		
-		ServerSocket serverSocket = new ServerSocket(portNumber);
+		ServerSocket serverSocket = null;
+		Scanner scan = new Scanner(System.in);
+		while(true){
+			try{
+				System.out.println("What port number would you like to operate this server on? ->");
+				portNumber = scan.nextInt();
+				serverSocket = new ServerSocket(portNumber);
+				break;
+			}catch(BindException be){
+				System.out.println("ERROR: Port already in use, try another number");
+				
+			}catch(InputMismatchException ime){
+				System.out.println("\nERROR: input was not a valid port number, try again.");
+				scan.next();
+			}catch(Exception ex){
+				ex.printStackTrace();
+			}
+		}
+		 
 		Server server = new Server(serverSocket);
 		server.startServer();
 		
