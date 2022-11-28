@@ -30,12 +30,11 @@ public class ClientHandler implements Runnable {
 			this.isAuthenticated =this.authenticate();
 			
 			if(this.isAuthenticated) {
-				
 				broadcastMessage("SERVER: "+this.username+" has entered the chat");
 			}
 			else {
-				
-				this.bw.write("PASSWORD AUTHENTICATION FAILED");
+				this.admin.banIPAddress(socket.getInetAddress());
+				this.bw.write("PASSWORD AUTHENTICATION FAILED, you have been banned from the server.");
 				this.bw.newLine();
 				this.bw.flush();
 				
@@ -52,7 +51,11 @@ public class ClientHandler implements Runnable {
 	}
 
 	public boolean authenticate() {
-		
+		if (this.admin.isIPbanned(this.socket.getInetAddress())){ 
+			this.isAuthenticated = false;
+			return this.isAuthenticated;
+		}
+
 		for(ClientHandler c : clientHandlers) {
 			try{
 				String guess = "";

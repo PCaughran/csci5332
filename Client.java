@@ -74,7 +74,7 @@ public class Client {
 						if(message.equals("PASSWORD AUTHENTICATION FAILED")) {
 							System.out.println("Termination caused by too many incorrect password attempts");
 							System.exit(-1);
-						}
+						}//add message for being banned from the server should that be the case.
 						
 						//if program made it here, the message is not an error message, so it is displayed.
 						System.out.println(message);

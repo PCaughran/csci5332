@@ -24,4 +24,8 @@ public class Admin {
 	public void banIPAddress(InetAddress address){
 		bannedIPAddresses.add(address);
 	}
+
+	public boolean isIPbanned(InetAddress address){
+		return bannedIPAddresses.contains(address);
+	}
 }

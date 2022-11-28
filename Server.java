@@ -36,8 +36,8 @@ public class Server {
 		try {
 			while(!serverSocket.isClosed()) {
 				Socket socket = serverSocket.accept();
-				System.out.println(socket.getInetAddress().getHostAddress().toString());
-				System.out.println("A new client has accessed the server.");
+				
+				System.out.println("A new client has accessed the server. IP Address: " +socket.getInetAddress().getHostAddress().toString());
 				ClientHandler clientHandle = new ClientHandler(socket, admin);
 				Thread thread = new Thread(clientHandle);
 				thread.start();
