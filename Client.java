@@ -7,7 +7,9 @@ import java.net.InetAddress;
 import java.net.Socket;
 import java.net.SocketException;
 import java.util.InputMismatchException;
+import java.util.NoSuchElementException;
 import java.util.Scanner;
+import java.util.regex.Pattern;
 
 public class Client {
 	private Socket socket;
@@ -71,7 +73,7 @@ public class Client {
 					try {
 						message = br.readLine(); //get the message
 						//check to see if it is a server distributed error message, proceeed accordingly
-						if(message.equals("PASSWORD AUTHENTICATION FAILED")) {
+						if(message.equals("PASSWORD_AUTHENTICATION_FAILED")) {
 							System.out.println("Termination caused by too many incorrect password attempts");
 							System.exit(-1);
 						}if(message.equals("BANNED")){
@@ -111,28 +113,39 @@ public class Client {
 
 		Client client= null;
 		Scanner scan = new Scanner(System.in);
+		final String inputRegex = "^(?:[0-9]{1,3}.){3}[0-9]{1,3}/[0-9]{1,4}$";
 		
 		try{
-		//query user for IP Address and Port number, these need to be previously known. unique to each server.
-		System.out.print("Thank you for joining the SecureChat Server. What is the IP/port# of the server you want to join? " );
-		String[] ipAndPort = scan.nextLine().split("/");	//split the input at the / because thats how i want it
-		
-		//TODO implement regex for incorrect IP/PORT input
-		
-		//query user for username. this will be immutable
-		System.out.println("Enter your username, it cannot be changed for the duration of your session. -> ");
-		String username = scan.nextLine();
+			String[] ipAndPort=null;
+			while(ipAndPort == null){
+					//query user for IP Address and Port number, these need to be previously known. unique to each server.
+				System.out.print("Thank you for joining the SecureChat Server. What is the IP/port# of the server you want to join? ->" );
+				String userIn = scan.nextLine();
+				
+				if(Pattern.matches(inputRegex, userIn)){
+					ipAndPort = userIn.split("/");	//split the input at the / because thats how i want it
+				}else{
+					System.out.println("ERROR: Invalid IP/Port number. Please enter in form 255.255.255.255/9999");
+				}
+				
+			}
+			//query user for username. this will be immutable
+			System.out.print("Enter your username, it cannot be changed for the duration of your session. -> ");
+			String username = scan.nextLine();
 
-		//create the IP Address Object, and the socket
-		InetAddress IPv4 = InetAddress.getByName(ipAndPort[0]);
-		Socket socket = new Socket(IPv4, Integer.parseInt(ipAndPort[1]));
-		
-		//instantiate Client object, and then continuously have them listen and send messages.
-		//listenForMessage will open a new thread, so the two threads(main & listen) will be executed in parallel 
-		client = new Client(socket, username );
-		client.listenForMessage();
-		client.sendMessage();
-		
+			//create the IP Address Object, and the socket
+			InetAddress IPv4 = InetAddress.getByName(ipAndPort[0]);
+			Socket socket = new Socket(IPv4, Integer.parseInt(ipAndPort[1]));
+			
+			//instantiate Client object, and then continuously have them listen and send messages.
+			//listenForMessage will open a new thread, so the two threads(main & listen) will be executed in parallel 
+			client = new Client(socket, username );
+			client.listenForMessage();
+			client.sendMessage();
+			
+		}catch(NoSuchElementException nsee){
+			System.out.println("\nERROR: Program terminated prior to reading input. restart to retry");
+			System.exit(1);
 		}catch(ConnectException ce) {
 			System.out.println("ERROR: Could not connect to the server, insure IP/Port is correct. Restart to retry.");
 			System.exit(1);
@@ -146,9 +159,5 @@ public class Client {
 		catch(Exception ex) {
 			ex.printStackTrace();
 		}
-		
-		
-		
-		
 	}
 }
