@@ -1,0 +1,17 @@
+Features
+
+Starting the server
+
+Connecting to the server from the client
+
+Password Authentication
+	Get banned to show that it works
+
+Chat
+
+exiting the server on the client side
+	Server will broadcast that the client left
+
+Closing the server
+	Show that it disconnects all the clients without crashing them
+

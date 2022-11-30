@@ -131,6 +131,7 @@ public class ClientHandler implements Runnable {
 							//write to the user describing the results
 							c.writeToClient(c.username, String.format("Password is correct: %b", passwordCorrect));
 							
+
 							//decrement attempts to eventually terminate the loop
 							attempts--;
 						}
@@ -142,7 +143,7 @@ public class ClientHandler implements Runnable {
 		}
 		
 		//if the error message not banned or not failed password, return true
-		return (this.curErrorMessage !=errorMessages.BANNED && this.curErrorMessage != errorMessages.PASSWORD_AUTHENTICATION_FAILED);
+		return (passwordCorrect && this.curErrorMessage !=errorMessages.BANNED && this.curErrorMessage != errorMessages.PASSWORD_AUTHENTICATION_FAILED);
 	}
 	
 

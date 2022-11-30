@@ -113,6 +113,7 @@ public class Client {
 
 		Client client= null;
 		Scanner scan = new Scanner(System.in);
+		//regex for IPv4Address/portnumber
 		final String inputRegex = "^(?:[0-9]{1,3}.){3}[0-9]{1,3}/[0-9]{1,4}$";
 		
 		try{
