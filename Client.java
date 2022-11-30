@@ -79,6 +79,12 @@ public class Client {
 						}if(message.equals("BANNED")){
 							System.out.println("YOU HAVE BEENED BANNED FROM THIS SERVER. CONTACT SERVER ADMIN FOR ASSISTANCE");
 							System.exit(1);
+						}if(message.equals("INVALID_COMMAND")){
+							System.out.println("ERROR: Command not recognized. Continue with your session.");
+							continue;
+						}if(message.substring(0,19).equals("CHANGE USERNAME TO:")){
+							username = message.substring(19);
+							continue;
 						}
 						
 						//if program made it here, the message is not an error message, so it is displayed.

@@ -7,8 +7,10 @@ import java.net.Socket;
 import java.util.ArrayList;
 
 public class ClientHandler implements Runnable {
-	
-	enum errorMessages {BANNED, PASSWORD_AUTHENTICATION_FAILED}
+	//utilizing the walrus to access the command interface
+	static final String commandAccessor = ":=";
+
+	enum errorMessages {BANNED, PASSWORD_AUTHENTICATION_FAILED, INVALID_COMMAND}
 
 	public static ArrayList<ClientHandler> clientHandlers = new ArrayList<>();
 	private Socket socket;
@@ -45,8 +47,7 @@ public class ClientHandler implements Runnable {
 				//let all other users know someone new joined
 				broadcastMessage("SERVER: "+this.username+" has entered the chat");
 				//let just-joined user see who is currently in the Server
-				System.out.println(this.currentServerPopulation());
-				writeToClient(this.username,"Welcome, your friends:\n" +this.currentServerPopulation()+"\nare excited to see you");
+				writeToClient(this.username,"Welcome, your friends are excited to see you");
 			}
 			else {
 				//add the IP address to the server's banned IP list
@@ -55,7 +56,7 @@ public class ClientHandler implements Runnable {
 				this.writeToClient(this.username, this.curErrorMessage.toString());
 			}
 		}catch(Exception ex) {
-			closeEverything(this.socket, this.br, this.bw);
+			ex.printStackTrace();
 		}
 	}
 
@@ -72,8 +73,7 @@ public class ClientHandler implements Runnable {
 				if(!clientHandlers.get(i).username.equals(this.username)){
 				//we are using +2, because List.add puts the element at the end of the list, so we are looking for the second to last element
 				//idea, what if we inserted the new element at the start of the list, to minimize the time it takes to find the element.
-				if(i+2 <= clientHandlers.size())	{output+=(clientHandlers.get(i).username+", ");}
-				else								{output+=(clientHandlers.get(i).username);}
+				output+=(clientHandlers.get(i).username+", ");		
 			}
 		}
 	}
@@ -153,7 +153,12 @@ public class ClientHandler implements Runnable {
 		while(socket.isConnected()) {
 			try {
 				message = this.br.readLine();
-				broadcastMessage(message);
+				
+				/*having trouble with keeping the commands working, commenting out those parts to keep reliability
+				//process incoming message to see if it is a command
+				if (message.contains(commandAccessor))	processCommand(message);
+				else*/								broadcastMessage(message);
+
 			}catch(Exception ex) {
 				closeEverything(this.socket, this.br, this.bw);
 				break;
@@ -161,6 +166,54 @@ public class ClientHandler implements Runnable {
 		}
 	}
 	
+	/* Command functionality, Dont want to delete but currently nonfunctional
+	public void processCommand(String message){
+		String command = message.substring(this.username.length()+commandAccessor.length()+2);
+		if (command.substring(0,2).equals("cu")){
+			changeUserName(command);
+		}else
+		if(command.substring(0,2).equals("ws")){
+			whisper(command);
+		}
+		else{this.curErrorMessage = errorMessages.INVALID_COMMAND; this.writeToClient(this.username, this.curErrorMessage.toString());}
+	}
+
+	public void whisper(String command){
+		//command comes in form ws-{RECIPIENT USER NAME}-{body}
+		try{
+			String[] whisperComponenets = command.split("-");
+			boolean messageSent = false;
+			for(ClientHandler c: clientHandlers){
+				if (c.username.equals(whisperComponenets[1])){
+					this.writeToClient(c.username, this.username+"(whisper):"+whisperComponenets[2]);
+					messageSent = true;
+				}
+			}
+			if(!messageSent){
+				this.writeToClient(this.username,"SERVER: ERROR: Could not send whisper.");
+			}
+		}catch(Exception ex){
+			this.curErrorMessage = errorMessages.INVALID_COMMAND;
+			this.writeToClient(this.username, this.curErrorMessage.toString());
+		}
+	}
+
+	public void changeUserName(String command){
+		//TODO
+		//username is not updating on the client side, which is where it originates. thats the issue, will fix later
+		//probably will just send it a specially formatted message to get it to update
+		try{
+			String newName = command.split("-")[1];
+			String oldName = this.username;
+			this.username = newName;
+			this.writeToClient(this.username, "CHANGE USERNAME TO:"+this.username);
+			broadcastMessage("SERVER: "+oldName+" has changed their username to "+this.username);
+		}catch(Exception ex){
+			this.curErrorMessage = errorMessages.INVALID_COMMAND;
+			this.writeToClient(this.username, this.curErrorMessage.toString());
+		}
+	}
+	*/
 
 	//method to send a message to ALL non-Sender users in the server
 	public void broadcastMessage(String message) {
